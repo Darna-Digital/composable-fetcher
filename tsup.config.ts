@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: {
     index: 'src/index.ts',
-    testing: 'src/testing.ts',
+    testing: 'src/functions/composable-fetcher.functions.mock.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from 'vitest';
-import type { FetchError, SpanEvent } from './types.js';
-import { createComposableFetcherFunctions } from './functions.js';
+import type { FetchError, SpanEvent } from '../entity/composable-fetcher.interfaces.js';
+import { createComposableFetcherFunctions } from './composable-fetcher.functions.js';
 import {
   createComposableFetcherDependenciesMock,
   createFailingMockSchema,
   createMockSchema,
   mockFetchNetworkError,
   mockFetchResponse,
-} from './testing.js';
+} from './composable-fetcher.functions.mock.js';
 
 function createTestSetup(
   overrides?: Parameters<typeof createComposableFetcherDependenciesMock>[0],

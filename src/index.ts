@@ -10,7 +10,7 @@ export {
   toError,
   isQueryMethod,
   createComposableFetcherFunctions,
-} from './functions.js';
+} from './functions/composable-fetcher.functions.js';
 
 export type {
   Builder,
@@ -30,4 +30,4 @@ export type {
   ComposableFetcherDependencies,
   ComposableFetcherFunctions,
   ExecuteParams,
-} from './types.js';
+} from './entity/composable-fetcher.interfaces.js';

@@ -7,7 +7,7 @@ import type {
   RequestOptions,
   SpanEvent,
   StandardSchema,
-} from './types.js';
+} from '../entity/composable-fetcher.interfaces.js';
 
 /**
  * Merges header layers in order. Later layers override earlier ones.

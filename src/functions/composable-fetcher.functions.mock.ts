@@ -17,7 +17,7 @@
 import type {
   ComposableFetcherDependencies,
   StandardSchema,
-} from './types.js';
+} from '../entity/composable-fetcher.interfaces.js';
 
 type MockFn = (...args: any[]) => any;
 

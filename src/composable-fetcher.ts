@@ -3,12 +3,12 @@ import type {
   FetcherConfig,
   OnErrorHandler,
   StandardSchema,
-} from './types.js';
+} from './entity/composable-fetcher.interfaces.js';
 import {
   createComposableFetcherFunctions,
   isQueryMethod,
   resolveHeaders,
-} from './functions.js';
+} from './functions/composable-fetcher.functions.js';
 
 /**
  * Creates a composable fetcher instance with the given configuration.
