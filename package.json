@@ -69,9 +69,9 @@
     "url": "https://github.com/darna-digital/composable-fetcher/issues"
   },
   "devDependencies": {
-    "tsup": "^8.4.0",
-    "typescript": "^5.7.0",
-    "vitest": "^3.0.0"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": ">=18"
