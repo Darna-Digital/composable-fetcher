@@ -1,0 +1,75 @@
+{
+  "name": "@darna-digital/composable-fetcher",
+  "version": "0.1.0",
+  "description": "Builder-based HTTP fetcher with Standard Schema validation, typed error decoding, composable error handling with retry, and observability.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./testing": {
+      "import": {
+        "types": "./dist/testing.d.ts",
+        "default": "./dist/testing.js"
+      },
+      "require": {
+        "types": "./dist/testing.d.cts",
+        "default": "./dist/testing.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run lint && npm run test && npm run build"
+  },
+  "keywords": [
+    "fetch",
+    "http",
+    "client",
+    "composable",
+    "builder",
+    "standard-schema",
+    "validation",
+    "zod",
+    "valibot",
+    "arktype",
+    "retry",
+    "observability",
+    "typescript"
+  ],
+  "author": "Darna Digital",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darna-digital/composable-fetcher.git"
+  },
+  "homepage": "https://github.com/darna-digital/composable-fetcher#readme",
+  "bugs": {
+    "url": "https://github.com/darna-digital/composable-fetcher/issues"
+  },
+  "devDependencies": {
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false
+}
