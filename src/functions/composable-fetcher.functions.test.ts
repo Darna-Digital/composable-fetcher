@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import type { FetchError, SpanEvent } from '../entity/composable-fetcher.interfaces.js';
+import { createComposableFetcher } from '../composable-fetcher.js';
 import { createComposableFetcherFunctions } from './composable-fetcher.functions.js';
 import {
   createComposableFetcherDependenciesMock,
@@ -330,37 +331,33 @@ describe('execute observability', () => {
   });
 });
 
-describe('execute onError', () => {
-  it('calls onError handler on http error', async () => {
-    const onError = vi.fn();
-    const { fetchMock, fns } = createTestSetup({ onError });
+describe('execute catch', () => {
+  it('calls catch handler on http error', async () => {
+    const catchHandler = vi.fn();
+    const { fetchMock, fns } = createTestSetup({ catch: catchHandler });
     mockFetchResponse(fetchMock, {
       status: 401,
       statusText: 'Unauthorized',
       body: {},
     });
 
-    try {
-      await fns.execute({
-        url: '/api/test',
-        method: 'GET',
-        op: 'query',
-        name: 'test',
-        fallback: 'failed',
-        headers: {},
-      });
-    } catch {
-      // expected
-    }
+    await fns.execute({
+      url: '/api/test',
+      method: 'GET',
+      op: 'query',
+      name: 'test',
+      fallback: 'failed',
+      headers: {},
+    });
 
-    expect(onError).toHaveBeenCalledTimes(1);
-    const error: FetchError = onError.mock.calls[0][0];
+    expect(catchHandler).toHaveBeenCalledTimes(1);
+    const error: FetchError = catchHandler.mock.calls[0][0];
     expect(error.type).toBe('http');
   });
 
   it('retries with new headers on 401', async () => {
     const fetchMock = vi.fn();
-    const onError = vi.fn(
+    const catchHandler = vi.fn(
       async (
         error: FetchError,
         retry: (opts?: {
@@ -375,7 +372,7 @@ describe('execute onError', () => {
 
     const deps = createComposableFetcherDependenciesMock({
       fetch: fetchMock,
-      onError,
+      catch: catchHandler,
     });
     const fns = createComposableFetcherFunctions(deps);
 
@@ -409,13 +406,13 @@ describe('execute onError', () => {
 
   it('does not retry more than once (prevents infinite loop)', async () => {
     const fetchMock = vi.fn();
-    const onError = vi.fn(
+    const catchHandler = vi.fn(
       async (_e: FetchError, retry: () => Promise<unknown>) => retry(),
     );
 
     const deps = createComposableFetcherDependenciesMock({
       fetch: fetchMock,
-      onError,
+      catch: catchHandler,
     });
     const fns = createComposableFetcherFunctions(deps);
 
@@ -446,79 +443,232 @@ describe('execute onError', () => {
       );
     }
 
-    expect(onError).toHaveBeenCalledTimes(1);
+    expect(catchHandler).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it('propagates error when onError returns undefined', async () => {
-    const onError = vi.fn(); // returns undefined
-    const { fetchMock, fns } = createTestSetup({ onError });
+  it('swallows error when catch handler returns undefined', async () => {
+    const catchHandler = vi.fn(); // returns undefined
+    const { fetchMock, fns } = createTestSetup({ catch: catchHandler });
     mockFetchResponse(fetchMock, { status: 500, statusText: 'ISE', body: {} });
 
-    try {
-      await fns.execute({
-        url: '/api/test',
-        method: 'GET',
-        op: 'query',
-        name: 'test',
-        fallback: 'server error',
-        headers: {},
-      });
-      expect.fail('should have thrown');
-    } catch (err) {
-      expect((err as Error).message).toBe('server error');
-    }
+    const result = await fns.execute({
+      url: '/api/test',
+      method: 'GET',
+      op: 'query',
+      name: 'test',
+      fallback: 'server error',
+      headers: {},
+    });
 
-    expect(onError).toHaveBeenCalledTimes(1);
+    expect(result).toBeUndefined();
+    expect(catchHandler).toHaveBeenCalledTimes(1);
   });
 
-  it('calls onError for network errors', async () => {
-    const onError = vi.fn();
-    const { fetchMock, fns } = createTestSetup({ onError });
+  it('calls catch handler for network errors', async () => {
+    const catchHandler = vi.fn();
+    const { fetchMock, fns } = createTestSetup({ catch: catchHandler });
     mockFetchNetworkError(fetchMock);
 
-    try {
-      await fns.execute({
-        url: '/api/test',
-        method: 'GET',
-        op: 'query',
-        name: 'test',
-        fallback: 'failed',
-        headers: {},
-      });
-    } catch {
-      // expected
-    }
+    await fns.execute({
+      url: '/api/test',
+      method: 'GET',
+      op: 'query',
+      name: 'test',
+      fallback: 'failed',
+      headers: {},
+    });
 
-    expect(onError).toHaveBeenCalledTimes(1);
-    expect(onError.mock.calls[0][0].type).toBe('network');
+    expect(catchHandler).toHaveBeenCalledTimes(1);
+    expect(catchHandler.mock.calls[0][0].type).toBe('network');
   });
 
-  it('per-request onError overrides dependency-level', async () => {
-    const depOnError = vi.fn();
-    const reqOnError = vi.fn();
-    const { fetchMock, fns } = createTestSetup({ onError: depOnError });
+  it('per-request catch overrides dependency-level', async () => {
+    const depCatch = vi.fn();
+    const reqCatch = vi.fn();
+    const { fetchMock, fns } = createTestSetup({ catch: depCatch });
     mockFetchResponse(fetchMock, {
       status: 400,
       statusText: 'Bad Request',
       body: {},
     });
 
-    try {
-      await fns.execute({
-        url: '/api/test',
-        method: 'GET',
-        op: 'query',
-        name: 'test',
-        fallback: 'failed',
-        headers: {},
-        onError: reqOnError,
-      });
-    } catch {
-      // expected
-    }
+    await fns.execute({
+      url: '/api/test',
+      method: 'GET',
+      op: 'query',
+      name: 'test',
+      fallback: 'failed',
+      headers: {},
+      catch: reqCatch,
+    });
 
-    expect(reqOnError).toHaveBeenCalledTimes(1);
-    expect(depOnError).not.toHaveBeenCalled();
+    expect(reqCatch).toHaveBeenCalledTimes(1);
+    expect(depCatch).not.toHaveBeenCalled();
+  });
+});
+
+describe('builder .catch()', () => {
+  it('catches http errors and passes typed FetchError to handler', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    mockFetchResponse(fetchMock, {
+      status: 422,
+      statusText: 'Unprocessable Entity',
+      body: { error: 'Validation failed' },
+    });
+
+    const handler = vi.fn();
+
+    await api
+      .url('/api/users')
+      .body({ email: 'bad' })
+      .catch(handler)
+      .run('POST');
+
+    expect(handler).toHaveBeenCalledTimes(1);
+    const error: FetchError = handler.mock.calls[0][0];
+    expect(error.type).toBe('http');
+    if (error.type === 'http') {
+      expect(error.status).toBe(422);
+      expect(error.message).toBe('Validation failed');
+    }
+  });
+
+  it('catches network errors and passes them to handler', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    mockFetchNetworkError(fetchMock);
+
+    const handler = vi.fn();
+
+    await api
+      .url('/api/users')
+      .catch(handler)
+      .run('GET');
+
+    expect(handler).toHaveBeenCalledTimes(1);
+    const error: FetchError = handler.mock.calls[0][0];
+    expect(error.type).toBe('network');
+  });
+
+  it('resolves to undefined when catch handler swallows error', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    mockFetchResponse(fetchMock, {
+      status: 500,
+      statusText: 'ISE',
+      body: {},
+    });
+
+    const result = await api
+      .url('/api/test')
+      .catch(() => {})
+      .run('GET');
+
+    expect(result).toBeUndefined();
+  });
+
+  it('does not interfere with successful requests', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    mockFetchResponse(fetchMock, { body: { id: '1' } });
+
+    const handler = vi.fn();
+
+    const result = await api
+      .url('/api/test')
+      .schema(createMockSchema({ id: '1' }))
+      .catch(handler)
+      .run('GET');
+
+    expect(result).toEqual({ id: '1' });
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it('works with errorSchema providing typed error data', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    const violationsBody = {
+      violations: [{ propertyPath: 'email', message: 'invalid email' }],
+    };
+
+    mockFetchResponse(fetchMock, {
+      status: 422,
+      statusText: 'Unprocessable Entity',
+      body: violationsBody,
+    });
+
+    const violationsSchema = createMockSchema(violationsBody);
+
+    let capturedData: unknown;
+
+    await api
+      .url('/api/users')
+      .body({ email: 'bad' })
+      .errorSchema(violationsSchema, (data) =>
+        data.violations.map((v) => v.message).join(', '),
+      )
+      .catch((error) => {
+        if (error.type === 'http') {
+          capturedData = error.data;
+        }
+      })
+      .run('POST');
+
+    expect(capturedData).toEqual(violationsBody);
+  });
+
+  it('supports async catch handlers', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    mockFetchResponse(fetchMock, {
+      status: 400,
+      statusText: 'Bad Request',
+      body: { error: 'oops' },
+    });
+
+    let asyncResolved = false;
+
+    await api
+      .url('/api/test')
+      .catch(async () => {
+        await new Promise((r) => setTimeout(r, 10));
+        asyncResolved = true;
+      })
+      .run('GET');
+
+    expect(asyncResolved).toBe(true);
+  });
+
+  it('retries via builder .catch()', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    mockFetchResponse(fetchMock, {
+      status: 401,
+      statusText: 'Unauthorized',
+      body: {},
+    });
+    mockFetchResponse(fetchMock, { body: { ok: true } });
+
+    const result = await api
+      .url('/api/test')
+      .schema(createMockSchema({ ok: true }))
+      .catch(async (error, retry) => {
+        if (error.type === 'http' && error.status === 401) {
+          return retry({ headers: { Authorization: 'Bearer refreshed' } });
+        }
+      })
+      .run('GET');
+
+    expect(result).toEqual({ ok: true });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });

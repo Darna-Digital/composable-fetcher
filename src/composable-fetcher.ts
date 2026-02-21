@@ -1,7 +1,7 @@
 import type {
   Builder,
+  CatchHandler,
   FetcherConfig,
-  OnErrorHandler,
   StandardSchema,
 } from './entity/composable-fetcher.interfaces.js';
 import {
@@ -17,7 +17,7 @@ import {
  * ```ts
  * const api = createComposableFetcher({
  *   headers: { Authorization: `Bearer ${token}` },
- *   onError: async (error, retry) => {
+ *   catch: async (error, retry) => {
  *     if (error.type === 'http' && error.status === 401) {
  *       const { accessToken } = await refreshToken();
  *       return retry({ headers: { Authorization: `Bearer ${accessToken}` } });
@@ -47,7 +47,7 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
     let _fallback = '';
     let _headers: Record<string, string> | undefined;
     let _body: unknown;
-    let _onError: OnErrorHandler | undefined;
+    let _catch: CatchHandler | undefined;
 
     const self: Builder = {
       schema(s) {
@@ -58,7 +58,7 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
       errorSchema(s, messageExtractor?) {
         _errorSchema = s;
         _errorMessage = messageExtractor;
-        return self;
+        return self as Builder<never, never>;
       },
 
       name(n) {
@@ -81,8 +81,8 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
         return self;
       },
 
-      onError(handler) {
-        _onError = handler;
+      catch(handler) {
+        _catch = handler;
         return self;
       },
 
@@ -93,7 +93,7 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
           sideEffects: {
             fetch: getFetchFn(),
             onSpan: config.onSpan,
-            onError: _onError ?? config.onError,
+            catch: _catch ?? config.catch,
             errorMessage: _errorMessage ?? config.errorMessage,
           },
           data: {

@@ -26,13 +26,13 @@ export type InferOutput<S extends StandardSchema> =
 export type NetworkError = { type: 'network'; message: string };
 
 /** An HTTP error response (status >= 400). */
-export type HttpError = {
+export type HttpError<D = unknown> = {
   type: 'http';
   status: number;
   statusText: string;
   message: string;
   /** Validated error body when an `errorSchema` matches. */
-  data?: unknown;
+  data?: D;
 };
 
 /** A response parsing/validation error. */
@@ -43,7 +43,7 @@ export type ParseError = {
 };
 
 /** Discriminated union of all fetch error types. */
-export type FetchError = NetworkError | HttpError | ParseError;
+export type FetchError<D = unknown> = NetworkError | HttpError<D> | ParseError;
 
 /** Observability event emitted for every request. */
 export type SpanEvent = {
@@ -63,14 +63,16 @@ export type RequestOptions = {
 };
 
 /**
- * Error handler signature.
+ * Catch handler for error handling with optional retry.
  *
  * - Return `retry()` result to transparently retry the request.
- * - Return `void` to let the error throw as normal.
+ * - Return `void` to swallow the error (promise resolves to `undefined`).
  * - `retry()` only works once per request to prevent infinite loops.
+ *
+ * When `errorSchema` is set, `HttpError.data` is fully typed as `E`.
  */
-export type OnErrorHandler = (
-  error: FetchError,
+export type CatchHandler<E = unknown> = (
+  error: FetchError<E>,
   retry: (options?: RequestOptions) => Promise<unknown>,
 ) => Promise<unknown> | void;
 
@@ -79,7 +81,7 @@ export type ComposableFetcherDependencies = {
   sideEffects: {
     fetch: typeof fetch;
     onSpan?: (event: SpanEvent) => void;
-    onError?: OnErrorHandler;
+    catch?: CatchHandler;
     errorMessage?: (data: unknown) => string;
   };
   data: {
@@ -102,7 +104,7 @@ export type ExecuteParams = {
   errorSchema?: StandardSchema;
   errorMessage?: (data: unknown) => string;
   onSpan?: (event: SpanEvent) => void;
-  onError?: OnErrorHandler;
+  catch?: CatchHandler;
   isRetry?: boolean;
 };
 
@@ -118,24 +120,28 @@ export type MutateMethod = 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 export type HttpMethod = QueryMethod | MutateMethod;
 
 /** Fluent builder for composing fetch requests. */
-export type Builder<T = void> = {
+export type Builder<T = void, E = unknown> = {
   /** Validate the response body against a Standard Schema. */
-  schema<S extends StandardSchema>(s: S): Builder<InferOutput<S>>;
+  schema<S extends StandardSchema>(s: S): Builder<InferOutput<S>, E>;
   /** Validate error response bodies with an optional message extractor. */
   errorSchema<S extends StandardSchema>(
     s: S,
     messageExtractor?: (data: InferOutput<S>) => string,
-  ): Builder<T>;
+  ): Builder<T, InferOutput<S>>;
   /** Set the span name for observability. Defaults to "METHOD /url". */
-  name(name: string): Builder<T>;
+  name(name: string): Builder<T, E>;
   /** Set a fallback error message when no error body is available. */
-  fallback(message: string): Builder<T>;
+  fallback(message: string): Builder<T, E>;
   /** Set per-request headers (merged with instance and built-in headers). */
-  headers(headers: Record<string, string>): Builder<T>;
+  headers(headers: Record<string, string>): Builder<T, E>;
   /** Set the request body (automatically JSON-stringified for mutations). */
-  body(body: unknown): Builder<T>;
-  /** Set a per-request error handler (overrides instance-level handler). */
-  onError(handler: OnErrorHandler): Builder<T>;
+  body(body: unknown): Builder<T, E>;
+  /**
+   * Handle errors inline with optional retry support.
+   * The handler receives a typed `FetchError` and a `retry` function.
+   * Return `retry()` to retry the request, or return nothing to swallow the error.
+   */
+  catch(handler: CatchHandler<E>): Builder<T, E>;
   /** Execute the request. Returns `Promise<T>` where T is inferred from the schema. */
   run(method: HttpMethod): Promise<T>;
 };
@@ -147,7 +153,7 @@ export type FetcherConfig = {
   /** Observability callback invoked for every request. */
   onSpan?: (event: SpanEvent) => void;
   /** Global error handler with retry support. */
-  onError?: OnErrorHandler;
+  catch?: CatchHandler;
   /** Global error body schema for decoding backend errors. */
   errorSchema?: StandardSchema;
   /** Extract a human-readable message from validated error data. */

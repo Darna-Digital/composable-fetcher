@@ -88,7 +88,7 @@ export function createComposableFetcherFunctions(
     } = params;
 
     const onSpan = params.onSpan ?? d.sideEffects.onSpan;
-    const onError = params.onError ?? d.sideEffects.onError;
+    const catchHandler = params.catch ?? d.sideEffects.catch;
     const errorSchema = params.errorSchema ?? d.data.errorSchema;
     const errorMessage = params.errorMessage ?? d.sideEffects.errorMessage;
 
@@ -106,7 +106,7 @@ export function createComposableFetcherFunctions(
     }
 
     function handleError(error: FetchError): Promise<unknown> {
-      if (isRetry || !onError) throw toError(error);
+      if (isRetry || !catchHandler) throw toError(error);
 
       const retryFn = (retryOptions?: RequestOptions) =>
         execute({
@@ -115,8 +115,8 @@ export function createComposableFetcherFunctions(
           isRetry: true,
         });
 
-      const result = onError(error, retryFn);
-      if (result === undefined) throw toError(error);
+      const result = catchHandler(error, retryFn);
+      if (result === undefined) return Promise.resolve(undefined);
       return result;
     }
 

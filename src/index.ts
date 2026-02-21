@@ -14,6 +14,7 @@ export {
 
 export type {
   Builder,
+  CatchHandler,
   FetcherConfig,
   FetchError,
   HttpError,
@@ -22,7 +23,6 @@ export type {
   HttpMethod,
   QueryMethod,
   MutateMethod,
-  OnErrorHandler,
   RequestOptions,
   SpanEvent,
   StandardSchema,

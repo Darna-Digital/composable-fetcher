@@ -31,7 +31,7 @@ export function createComposableFetcherDependenciesMock(
   overrides?: Partial<{
     fetch: MockFn;
     onSpan: MockFn;
-    onError: MockFn;
+    catch: MockFn;
     errorSchema: StandardSchema;
     errorMessage: MockFn;
   }>,
@@ -41,7 +41,7 @@ export function createComposableFetcherDependenciesMock(
     sideEffects: {
       fetch: (overrides?.fetch ?? noopFn) as typeof fetch,
       onSpan: overrides?.onSpan,
-      onError: overrides?.onError,
+      catch: overrides?.catch,
       errorMessage: overrides?.errorMessage,
     },
     data: {
