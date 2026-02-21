@@ -1,6 +1,6 @@
 {
   "name": "@darna-digital/composable-fetcher",
-  "version": "0.1.0",
+  "version": "0.1.01",
   "description": "Builder-based HTTP fetcher with Standard Schema validation, typed error decoding, composable error handling with retry, and observability.",
   "type": "module",
   "main": "./dist/index.cjs",
