@@ -351,19 +351,22 @@ describe('execute catch', () => {
     });
 
     expect(catchHandler).toHaveBeenCalledTimes(1);
-    const error: FetchError = catchHandler.mock.calls[0][0];
+    const error: FetchError = catchHandler.mock.calls[0][0].error;
     expect(error.type).toBe('http');
   });
 
   it('retries with new headers on 401', async () => {
     const fetchMock = vi.fn();
     const catchHandler = vi.fn(
-      async (
-        error: FetchError,
+      async ({
+        error,
+        retry,
+      }: {
+        error: FetchError;
         retry: (opts?: {
           headers?: Record<string, string>;
-        }) => Promise<unknown>,
-      ) => {
+        }) => Promise<unknown>;
+      }) => {
         if (error.type === 'http' && error.status === 401) {
           return retry({ headers: { Authorization: 'Bearer new-token' } });
         }
@@ -407,7 +410,7 @@ describe('execute catch', () => {
   it('does not retry more than once (prevents infinite loop)', async () => {
     const fetchMock = vi.fn();
     const catchHandler = vi.fn(
-      async (_e: FetchError, retry: () => Promise<unknown>) => retry(),
+      async ({ retry }: { retry: () => Promise<unknown> }) => retry(),
     );
 
     const deps = createComposableFetcherDependenciesMock({
@@ -480,7 +483,7 @@ describe('execute catch', () => {
     });
 
     expect(catchHandler).toHaveBeenCalledTimes(1);
-    expect(catchHandler.mock.calls[0][0].type).toBe('network');
+    expect(catchHandler.mock.calls[0][0].error.type).toBe('network');
   });
 
   it('per-request catch overrides dependency-level', async () => {
@@ -528,7 +531,7 @@ describe('builder .catch()', () => {
       .run('POST');
 
     expect(handler).toHaveBeenCalledTimes(1);
-    const error: FetchError = handler.mock.calls[0][0];
+    const error: FetchError = handler.mock.calls[0][0].error;
     expect(error.type).toBe('http');
     if (error.type === 'http') {
       expect(error.status).toBe(422);
@@ -550,7 +553,7 @@ describe('builder .catch()', () => {
       .run('GET');
 
     expect(handler).toHaveBeenCalledTimes(1);
-    const error: FetchError = handler.mock.calls[0][0];
+    const error: FetchError = handler.mock.calls[0][0].error;
     expect(error.type).toBe('network');
   });
 
@@ -614,7 +617,7 @@ describe('builder .catch()', () => {
       .errorSchema(violationsSchema, (data) =>
         data.violations.map((v) => v.message).join(', '),
       )
-      .catch((error) => {
+      .catch(({ error }) => {
         if (error.type === 'http') {
           capturedData = error.data;
         }
@@ -661,7 +664,7 @@ describe('builder .catch()', () => {
     const result = await api
       .url('/api/test')
       .schema(createMockSchema({ ok: true }))
-      .catch(async (error, retry) => {
+      .catch(async ({ error, retry }) => {
         if (error.type === 'http' && error.status === 401) {
           return retry({ headers: { Authorization: 'Bearer refreshed' } });
         }

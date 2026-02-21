@@ -115,7 +115,7 @@ export function createComposableFetcherFunctions(
           isRetry: true,
         });
 
-      const result = catchHandler(error, retryFn);
+      const result = catchHandler({ error, retry: retryFn });
       if (result === undefined) return Promise.resolve(undefined);
       return result;
     }

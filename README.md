@@ -93,13 +93,13 @@ const adminApi = api.configure({ headers: { 'X-Role': 'admin' } });
 
 ## Error handling
 
-`.catch()` handles errors inline. The handler receives a typed `FetchError` and a `retry` function.
+`.catch()` handles errors inline. The handler receives `{ error, retry }`.
 
 ```ts
-type CatchHandler<E> = (
-  error: FetchError<E>,
-  retry: (options?: { headers?: Record<string, string> }) => Promise<unknown>,
-) => Promise<unknown> | void;
+type CatchHandler<E> = (params: {
+  error: FetchError<E>;
+  retry: (options?: { headers?: Record<string, string> }) => Promise<unknown>;
+}) => Promise<unknown> | void;
 ```
 
 - Return nothing — error is swallowed, promise resolves to `undefined`
@@ -117,7 +117,7 @@ await api
   .url('/api/users')
   .body({ email, name })
   .errorSchema(ViolationsSchema)
-  .catch((error) => {
+  .catch(({ error }) => {
     if (error.type === 'http' && error.data) {
       for (const v of error.data.violations) {
         form.setError(v.propertyPath, { message: v.message });
@@ -132,7 +132,7 @@ await api
 ```ts
 const api = createComposableFetcher({
   headers: { Authorization: `Bearer ${getAccessToken()}` },
-  catch: async (error, retry) => {
+  catch: async ({ error, retry }) => {
     if (error.type !== 'http' || error.status !== 401) return;
     const { accessToken } = await refreshAccessToken();
     setAccessToken(accessToken);

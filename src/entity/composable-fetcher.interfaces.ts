@@ -71,10 +71,10 @@ export type RequestOptions = {
  *
  * When `errorSchema` is set, `HttpError.data` is fully typed as `E`.
  */
-export type CatchHandler<E = unknown> = (
-  error: FetchError<E>,
-  retry: (options?: RequestOptions) => Promise<unknown>,
-) => Promise<unknown> | void;
+export type CatchHandler<E = unknown> = (params: {
+  error: FetchError<E>;
+  retry: (options?: RequestOptions) => Promise<unknown>;
+}) => Promise<unknown> | void;
 
 /** Dependencies injected into the composable functions layer. */
 export type ComposableFetcherDependencies = {
@@ -138,8 +138,8 @@ export type Builder<T = void, E = unknown> = {
   body(body: unknown): Builder<T, E>;
   /**
    * Handle errors inline with optional retry support.
-   * The handler receives a typed `FetchError` and a `retry` function.
-   * Return `retry()` to retry the request, or return nothing to swallow the error.
+   * The handler receives `{ error, retry }` — return `retry()` to retry
+   * the request, or return nothing to swallow the error.
    */
   catch(handler: CatchHandler<E>): Builder<T, E>;
   /** Execute the request. Returns `Promise<T>` where T is inferred from the schema. */

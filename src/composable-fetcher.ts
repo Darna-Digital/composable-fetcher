@@ -17,7 +17,7 @@ import {
  * ```ts
  * const api = createComposableFetcher({
  *   headers: { Authorization: `Bearer ${token}` },
- *   catch: async (error, retry) => {
+ *   catch: async ({ error, retry }) => {
  *     if (error.type === 'http' && error.status === 401) {
  *       const { accessToken } = await refreshToken();
  *       return retry({ headers: { Authorization: `Bearer ${accessToken}` } });
