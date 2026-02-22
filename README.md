@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="art/composable-fetcher.png" alt="Composable Fetcher" />
+  <img src="art/composable-fetcher-logo.png" alt="Composable Fetcher" />
 </p>
 
 Builder-based HTTP fetcher with Standard Schema validation, typed error decoding, retry, and observability.
