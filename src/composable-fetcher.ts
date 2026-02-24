@@ -43,6 +43,7 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
     let _schema: StandardSchema | undefined;
     let _errorSchema: StandardSchema | undefined;
     let _errorMessage: ((data: any) => string) | undefined;
+    let _inputSchema: StandardSchema | undefined;
     let _name = '';
     let _fallback = '';
     let _headers: Record<string, string> | undefined;
@@ -59,6 +60,11 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
         _errorSchema = s;
         _errorMessage = messageExtractor;
         return self as Builder<never, never>;
+      },
+
+      input(s) {
+        _inputSchema = s;
+        return self as Builder<never, never, never>;
       },
 
       name(n) {
@@ -114,6 +120,7 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
           ),
           body: isMutation ? _body : undefined,
           schema: _schema,
+          inputSchema: _inputSchema,
           credentials: config.credentials ?? 'include',
           cache: config.cache ?? 'no-store',
         }) as Promise<never>;

@@ -7,6 +7,7 @@ Builder-based HTTP fetcher with Standard Schema validation, typed error decoding
 - Zero dependencies — native `fetch`
 - Standard Schema v1 (Zod, Valibot, ArkType, etc.)
 - Full type inference from schema to response
+- Input validation — catch bad data before it hits the server
 - Inline error handling with retry
 - Observability via span events
 
@@ -30,10 +31,13 @@ const users = await composableFetcher
   .schema(UsersSchema)
   .run('GET');
 
-// POST (void mutation)
+// POST with input validation
+const CreateUserSchema = z.object({ email: z.string().email(), name: z.string() });
+
 await composableFetcher
   .url('/api/users')
-  .body({ email: 'foo@bar.com' })
+  .input(CreateUserSchema)
+  .body({ email: 'foo@bar.com', name: 'Alice' })
   .run('POST');
 ```
 
@@ -43,6 +47,7 @@ await composableFetcher
 composableFetcher
   .url(url)                          // target URL
   .schema(schema)                    // response validation (Standard Schema)
+  .input(schema)                     // input validation for the request body
   .errorSchema(schema, extractor?)   // backend error body validation
   .name('getUsers')                  // span name, defaults to "METHOD /url"
   .fallback('Load failed')           // fallback error message
@@ -141,7 +146,8 @@ Discriminated union — narrow on `type`:
 type NetworkError = { type: 'network'; message: string };
 type HttpError<D> = { type: 'http'; status: number; statusText: string; message: string; data?: D };
 type ParseError   = { type: 'parse'; message: string; issues: string[] };
-type FetchError<D> = NetworkError | HttpError<D> | ParseError;
+type InputError   = { type: 'input'; message: string; issues: string[] };
+type FetchError<D> = NetworkError | HttpError<D> | ParseError | InputError;
 ```
 
 `D` defaults to `unknown`. When `errorSchema` is set, `D` is inferred from the schema.
@@ -179,6 +185,41 @@ await api
   .errorSchema(ExternalErrorSchema, (data) => data.detail)
   .run('POST');
 ```
+
+## Input validation
+
+`.input(schema)` validates the request body before it leaves the client.
+
+```ts
+const CreateUserSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1),
+});
+
+await api
+  .url('/api/users')
+  .input(CreateUserSchema)
+  .body({ email: 'alice@test.com', name: 'Alice' })
+  .schema(UserSchema)
+  .run('POST');
+```
+
+`.body()` is type-checked against the input schema — pass the wrong shape and TS catches it. At runtime, bad data produces an `InputError` and the request never fires:
+
+```ts
+await api
+  .url('/api/users')
+  .input(CreateUserSchema)
+  .body({ email: 'alice@test.com', name: 'Alice' })
+  .catch(({ error }) => {
+    if (error.type === 'input') {
+      console.log(error.issues); // ["email: Invalid email"]
+    }
+  })
+  .run('POST');
+```
+
+Without `.input()`, `.body()` accepts anything — same as before.
 
 ## Headers
 

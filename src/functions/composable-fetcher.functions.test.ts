@@ -511,6 +511,238 @@ describe('execute catch', () => {
   });
 });
 
+describe('execute input validation', () => {
+  it('validates body against inputSchema before sending', async () => {
+    const { fetchMock, fns } = createTestSetup();
+    mockFetchResponse(fetchMock, { body: { id: '1' } });
+
+    await fns.execute({
+      url: '/api/test',
+      method: 'POST',
+      op: 'mutate',
+      name: 'test',
+      fallback: 'failed',
+      headers: {},
+      body: { email: 'a@b.com' },
+      inputSchema: createMockSchema({ email: 'a@b.com' }),
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][1]?.body).toBe('{"email":"a@b.com"}');
+  });
+
+  it('throws FetchError.input when inputSchema validation fails', async () => {
+    const { fetchMock, fns } = createTestSetup();
+
+    try {
+      await fns.execute({
+        url: '/api/test',
+        method: 'POST',
+        op: 'mutate',
+        name: 'test',
+        fallback: 'failed',
+        headers: {},
+        body: { email: 'bad' },
+        inputSchema: createFailingMockSchema('email must be valid'),
+      });
+      expect.fail('should have thrown');
+    } catch (err) {
+      const fe = (err as Error & { fetchError: FetchError }).fetchError;
+      expect(fe.type).toBe('input');
+      if (fe.type === 'input') {
+        expect(fe.message).toBe('Invalid input');
+        expect(fe.issues).toEqual(['email must be valid']);
+      }
+    }
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('routes input validation errors through catch handler', async () => {
+    const catchHandler = vi.fn();
+    const { fetchMock, fns } = createTestSetup({ catch: catchHandler });
+
+    await fns.execute({
+      url: '/api/test',
+      method: 'POST',
+      op: 'mutate',
+      name: 'test',
+      fallback: 'failed',
+      headers: {},
+      body: { bad: 'data' },
+      inputSchema: createFailingMockSchema('invalid field'),
+    });
+
+    expect(catchHandler).toHaveBeenCalledTimes(1);
+    const error: FetchError = catchHandler.mock.calls[0][0].error;
+    expect(error.type).toBe('input');
+    if (error.type === 'input') {
+      expect(error.issues).toEqual(['invalid field']);
+    }
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('uses the validated (transformed) value as the body', async () => {
+    const { fetchMock, fns } = createTestSetup();
+    mockFetchResponse(fetchMock);
+
+    const transformingSchema = {
+      '~standard': {
+        version: 1 as const,
+        validate: (value: unknown) => ({
+          value: { ...(value as Record<string, unknown>), extra: 'added' },
+        }),
+      },
+    };
+
+    await fns.execute({
+      url: '/api/test',
+      method: 'POST',
+      op: 'mutate',
+      name: 'test',
+      fallback: 'failed',
+      headers: {},
+      body: { name: 'John' },
+      inputSchema: transformingSchema,
+    });
+
+    expect(fetchMock.mock.calls[0][1]?.body).toBe(
+      '{"name":"John","extra":"added"}',
+    );
+  });
+
+  it('skips input validation when no inputSchema is provided', async () => {
+    const { fetchMock, fns } = createTestSetup();
+    mockFetchResponse(fetchMock);
+
+    await fns.execute({
+      url: '/api/test',
+      method: 'POST',
+      op: 'mutate',
+      name: 'test',
+      fallback: 'failed',
+      headers: {},
+      body: { anything: 'goes' },
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('skips input validation when body is undefined', async () => {
+    const { fetchMock, fns } = createTestSetup();
+    mockFetchResponse(fetchMock);
+
+    await fns.execute({
+      url: '/api/test',
+      method: 'POST',
+      op: 'mutate',
+      name: 'test',
+      fallback: 'failed',
+      headers: {},
+      inputSchema: createFailingMockSchema('should not trigger'),
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('emits span with error on input validation failure', async () => {
+    const onSpan = vi.fn();
+    const { fetchMock, fns } = createTestSetup({ onSpan });
+
+    try {
+      await fns.execute({
+        url: '/api/test',
+        method: 'POST',
+        op: 'mutate',
+        name: 'createUser',
+        fallback: 'failed',
+        headers: {},
+        body: { bad: 'data' },
+        inputSchema: createFailingMockSchema('name is required'),
+      });
+    } catch {
+      // expected
+    }
+
+    expect(onSpan).toHaveBeenCalledTimes(1);
+    const span: SpanEvent = onSpan.mock.calls[0][0];
+    expect(span.ok).toBe(false);
+    expect(span.error?.type).toBe('input');
+  });
+});
+
+describe('builder .input()', () => {
+  it('validates body before sending on mutation', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    mockFetchResponse(fetchMock, { body: { id: '1' } });
+
+    const result = await api
+      .url('/api/users')
+      .input(createMockSchema({ name: 'John' }))
+      .body({ name: 'John' })
+      .schema(createMockSchema({ id: '1' }))
+      .run('POST');
+
+    expect(result).toEqual({ id: '1' });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][1]?.body).toBe('{"name":"John"}');
+  });
+
+  it('throws input error when body fails input schema validation', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    try {
+      await api
+        .url('/api/users')
+        .input(createFailingMockSchema('email is required'))
+        .body({ name: 'John' })
+        .run('POST');
+      expect.fail('should have thrown');
+    } catch (err) {
+      const fe = (err as Error & { fetchError: FetchError }).fetchError;
+      expect(fe.type).toBe('input');
+      if (fe.type === 'input') {
+        expect(fe.issues).toEqual(['email is required']);
+      }
+    }
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('routes input errors through builder .catch() handler', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    const handler = vi.fn();
+
+    await api
+      .url('/api/users')
+      .input(createFailingMockSchema('bad input'))
+      .body({ invalid: true })
+      .catch(handler)
+      .run('POST');
+
+    expect(handler).toHaveBeenCalledTimes(1);
+    const error: FetchError = handler.mock.calls[0][0].error;
+    expect(error.type).toBe('input');
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('does not validate body when no .input() is used (backwards compatible)', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    mockFetchResponse(fetchMock);
+
+    await api.url('/api/users').body({ anything: 'goes' }).run('POST');
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('builder .catch()', () => {
   it('catches http errors and passes typed FetchError to handler', async () => {
     const fetchMock = vi.fn();

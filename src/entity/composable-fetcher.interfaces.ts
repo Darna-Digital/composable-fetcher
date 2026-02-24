@@ -22,6 +22,8 @@ export type StandardResult<T> =
 export type InferOutput<S extends StandardSchema> =
   S extends StandardSchema<infer T> ? T : never;
 
+export type InferInput<S extends StandardSchema> = InferOutput<S>;
+
 /** A network-level error (DNS failure, timeout, no internet, etc.). */
 export type NetworkError = { type: 'network'; message: string };
 
@@ -42,8 +44,18 @@ export type ParseError = {
   issues: string[];
 };
 
+export type InputError = {
+  type: 'input';
+  message: string;
+  issues: string[];
+};
+
 /** Discriminated union of all fetch error types. */
-export type FetchError<D = unknown> = NetworkError | HttpError<D> | ParseError;
+export type FetchError<D = unknown> =
+  | NetworkError
+  | HttpError<D>
+  | ParseError
+  | InputError;
 
 /** Observability event emitted for every request. */
 export type SpanEvent = {
@@ -99,6 +111,7 @@ export type ExecuteParams = {
   headers: Record<string, string>;
   body?: unknown;
   schema?: StandardSchema;
+  inputSchema?: StandardSchema;
   credentials?: RequestCredentials;
   cache?: RequestCache;
   errorSchema?: StandardSchema;
@@ -120,28 +133,28 @@ export type MutateMethod = 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 export type HttpMethod = QueryMethod | MutateMethod;
 
 /** Fluent builder for composing fetch requests. */
-export type Builder<T = void, E = unknown> = {
+export type Builder<T = void, E = unknown, I = unknown> = {
   /** Validate the response body against a Standard Schema. */
-  schema<S extends StandardSchema>(s: S): Builder<InferOutput<S>, E>;
+  schema<S extends StandardSchema>(s: S): Builder<InferOutput<S>, E, I>;
   /** Validate error response bodies with an optional message extractor. */
   errorSchema<S extends StandardSchema>(
     s: S,
     messageExtractor?: (data: InferOutput<S>) => string,
-  ): Builder<T, InferOutput<S>>;
+  ): Builder<T, InferOutput<S>, I>;
+  input<S extends StandardSchema>(s: S): Builder<T, E, InferOutput<S>>;
   /** Set the span name for observability. Defaults to "METHOD /url". */
-  name(name: string): Builder<T, E>;
+  name(name: string): Builder<T, E, I>;
   /** Set a fallback error message when no error body is available. */
-  fallback(message: string): Builder<T, E>;
+  fallback(message: string): Builder<T, E, I>;
   /** Set per-request headers (merged with instance and built-in headers). */
-  headers(headers: Record<string, string>): Builder<T, E>;
-  /** Set the request body (automatically JSON-stringified for mutations). */
-  body(body: unknown): Builder<T, E>;
+  headers(headers: Record<string, string>): Builder<T, E, I>;
+  body(body: I): Builder<T, E, I>;
   /**
    * Handle errors inline with optional retry support.
    * The handler receives `{ error, retry }` — return `retry()` to retry
    * the request, or return nothing to swallow the error.
    */
-  catch(handler: CatchHandler<E>): Builder<T, E>;
+  catch(handler: CatchHandler<E>): Builder<T, E, I>;
   /** Execute the request. Returns `Promise<T>` where T is inferred from the schema. */
   run(method: HttpMethod): Promise<T>;
 };
