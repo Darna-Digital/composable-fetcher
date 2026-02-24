@@ -1,46 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { createComposableFetcher } from '../composable-fetcher.js';
 import type { FetchError } from '../entity/composable-fetcher.interfaces.js';
+import {
+  createFailingMockSchema,
+  createMockSchema,
+} from '../functions/composable-fetcher.functions.mock.js';
 import { createFakeApi } from './index.js';
-
-function createStrictSchema<T extends Record<string, unknown>>(
-  shape: { [K in keyof T]: (v: unknown) => v is T[K] },
-) {
-  return {
-    '~standard': {
-      version: 1 as const,
-      validate: (value: unknown) => {
-        if (typeof value !== 'object' || value === null)
-          return { issues: [{ message: 'Expected an object' }] };
-
-        const obj = value as Record<string, unknown>;
-        const issues: Array<{ message: string }> = [];
-
-        for (const [key, check] of Object.entries(shape)) {
-          if (!(key in obj))
-            issues.push({ message: `Missing required field: ${key}` });
-          else if (!check(obj[key]))
-            issues.push({ message: `Invalid type for field: ${key}` });
-        }
-
-        if (issues.length > 0) return { issues };
-        return { value: value as T };
-      },
-    },
-  };
-}
-
-function createPassthroughSchema<T>() {
-  return {
-    '~standard': {
-      version: 1 as const,
-      validate: (value: unknown) => ({ value: value as T }),
-    },
-  };
-}
-
-const isString = (v: unknown): v is string => typeof v === 'string';
-const isNumber = (v: unknown): v is number => typeof v === 'number';
 
 describe('e2e: input validation', () => {
   it('validates input and sends the request on success', async () => {
@@ -55,9 +20,9 @@ describe('e2e: input validation', () => {
 
     const result = await api
       .url('/api/users')
-      .input(createStrictSchema({ name: isString, email: isString }))
+      .input(createMockSchema({ name: '', email: '' }))
       .body({ name: 'Alice', email: 'alice@example.com' })
-      .schema(createPassthroughSchema<{ id: number; name: string; email: string }>())
+      .schema(createMockSchema({ id: 1, name: 'Alice', email: 'alice@example.com' }))
       .run('POST');
 
     expect(result).toEqual({ id: 1, name: 'Alice', email: 'alice@example.com' });
@@ -76,15 +41,15 @@ describe('e2e: input validation', () => {
     try {
       await api
         .url('/api/users')
-        .input(createStrictSchema({ name: isString, email: isString }))
-        .body({ name: 'Alice' } as any)
+        .input(createFailingMockSchema('email is required'))
+        .body({ name: 'Alice' })
         .run('POST');
       expect.fail('should have thrown');
     } catch (err) {
       const fe = (err as Error & { fetchError: FetchError }).fetchError;
       expect(fe.type).toBe('input');
       if (fe.type === 'input') {
-        expect(fe.issues).toContain('Missing required field: email');
+        expect(fe.issues).toContain('email is required');
       }
     }
   });
@@ -103,8 +68,8 @@ describe('e2e: input validation', () => {
 
     await api
       .url('/api/items')
-      .input(createStrictSchema({ title: isString, count: isNumber }))
-      .body({ title: 123, count: 'not a number' } as any)
+      .input(createFailingMockSchema('invalid fields'))
+      .body({ title: 123, count: 'not a number' })
       .catch(({ error }) => {
         capturedError = error;
       })
@@ -113,8 +78,7 @@ describe('e2e: input validation', () => {
     expect(capturedError).toBeDefined();
     expect(capturedError!.type).toBe('input');
     if (capturedError!.type === 'input') {
-      expect(capturedError!.issues).toContain('Invalid type for field: title');
-      expect(capturedError!.issues).toContain('Invalid type for field: count');
+      expect(capturedError!.issues).toContain('invalid fields');
     }
   });
 
@@ -131,7 +95,7 @@ describe('e2e: input validation', () => {
     const result = await api
       .url('/api/users')
       .body({ anything: 'goes' })
-      .schema(createPassthroughSchema<{ id: number }>())
+      .schema(createMockSchema({ id: 1 }))
       .run('POST');
 
     expect(result).toEqual({ id: 1, anything: 'goes' });
@@ -151,10 +115,10 @@ describe('e2e: input validation', () => {
 
     await api
       .url('/api/users')
-      .input(createStrictSchema({ name: isString, email: isString }))
+      .input(createMockSchema({ name: '', email: '' }))
       .body({ name: 'Alice', email: 'alice@example.com' })
       .errorSchema(
-        createPassthroughSchema<{ error: string; code: number }>(),
+        createMockSchema({ error: '', code: 0 }),
         (data) => data.error,
       )
       .catch(({ error }) => {
@@ -184,10 +148,7 @@ describe('e2e: input validation', () => {
             return { issues: [{ message: 'name must be a string' }] };
 
           return {
-            value: {
-              name: obj.name.trim(),
-              createdAt: '2026-02-24T00:00:00Z',
-            },
+            value: { name: obj.name.trim(), createdAt: '2026-02-24T00:00:00Z' },
           };
         },
       },
