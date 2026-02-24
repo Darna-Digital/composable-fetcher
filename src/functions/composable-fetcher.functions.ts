@@ -4,6 +4,7 @@ import type {
   ExecuteParams,
   FetchError,
   HttpError,
+  InputError,
   RequestOptions,
   SpanEvent,
   StandardSchema,
@@ -80,12 +81,14 @@ export function createComposableFetcherFunctions(
       name,
       fallback,
       headers,
-      body,
       schema,
+      inputSchema,
       credentials,
       cache,
       isRetry = false,
     } = params;
+
+    let body = params.body;
 
     const onSpan = params.onSpan ?? d.sideEffects.onSpan;
     const catchHandler = params.catch ?? d.sideEffects.catch;
@@ -118,6 +121,22 @@ export function createComposableFetcherFunctions(
       const result = catchHandler({ error, retry: retryFn });
       if (result === undefined) return Promise.resolve(undefined);
       return result;
+    }
+
+    if (inputSchema && body !== undefined) {
+      const inputResult = await inputSchema['~standard'].validate(body);
+
+      if (inputResult.issues) {
+        const error: InputError = {
+          type: 'input',
+          message: 'Invalid input',
+          issues: inputResult.issues.map((i) => i.message),
+        };
+        span({ ok: false, error });
+        return handleError(error);
+      }
+
+      body = inputResult.value;
     }
 
     let response: Response;
