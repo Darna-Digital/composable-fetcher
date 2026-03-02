@@ -20,6 +20,13 @@ This example uses `link:../..`, so it consumes the local library directly (no pu
 
 Open `http://localhost:3000`.
 
+## Run e2e
+
+```bash
+pnpm exec playwright install chromium
+pnpm e2e
+```
+
 ## What to test
 
 1. Submit with empty title -> client-side `.input()` blocks the request and shows validation error.
