@@ -8,6 +8,9 @@ export {
 export {
   resolveHeaders,
   toError,
+  getFetchError,
+  isComposableFetcherError,
+  toErrorMessage,
   isQueryMethod,
   createComposableFetcherFunctions,
 } from './functions/composable-fetcher.functions.js';
@@ -17,6 +20,7 @@ export type {
   CatchHandler,
   FetcherConfig,
   FetchError,
+  FetcherThrownError,
   HttpError,
   NetworkError,
   ParseError,

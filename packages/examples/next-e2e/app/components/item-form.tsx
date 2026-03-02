@@ -8,8 +8,18 @@ import {
   ErrorResponseSchema,
   type Item,
 } from '@/lib/item-schemas';
-import { api, toUiMessage } from '@/lib/fetcher-client';
+import { api } from '@/lib/fetcher-client';
 import styles from '../page.module.css';
+
+function formatUiError(error: {
+  type: string;
+  message: string;
+  issues?: string[];
+}): string {
+  if (error.type === 'input' && error.issues) return error.issues.join(', ');
+  if (error.type === 'parse' && error.issues) return `parse: ${error.issues.join(', ')}`;
+  return error.message;
+}
 
 export function ItemForm() {
   const [title, setTitle] = useState('');
@@ -25,6 +35,7 @@ export function ItemForm() {
         .body(input)
         .errorSchema(ErrorResponseSchema, (data) => data.error)
         .schema(CreateItemResponseSchema)
+        .formatError(formatUiError)
         .run('POST'),
     onSuccess: (result) => {
       setCreatedItem(result.item);
@@ -33,7 +44,7 @@ export function ItemForm() {
       setCount('1');
     },
     onError: (error) => {
-      setMessage(toUiMessage(error));
+      setMessage(error.message);
     },
   });
 

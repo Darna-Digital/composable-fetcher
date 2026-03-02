@@ -3,6 +3,7 @@ import type {
   ComposableFetcherFunctions,
   ExecuteParams,
   FetchError,
+  FetcherThrownError,
   HttpError,
   InputError,
   RequestOptions,
@@ -20,12 +21,80 @@ export function resolveHeaders(
   return Object.assign({ Accept: 'application/json' }, ...layers);
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === 'string');
+}
+
+function isFetchError(value: unknown): value is FetchError {
+  if (!isRecord(value) || typeof value.type !== 'string') return false;
+
+  switch (value.type) {
+    case 'network':
+      return typeof value.message === 'string';
+    case 'http':
+      return (
+        typeof value.status === 'number' &&
+        typeof value.statusText === 'string' &&
+        typeof value.message === 'string'
+      );
+    case 'parse':
+    case 'input':
+      return (
+        typeof value.message === 'string' && isStringArray(value.issues)
+      );
+    default:
+      return false;
+  }
+}
+
+/** Type guard for errors thrown by composable-fetcher. */
+export function isComposableFetcherError(
+  error: unknown,
+): error is FetcherThrownError<unknown> {
+  if (!(error instanceof Error)) return false;
+  if (!('fetchError' in error)) return false;
+
+  const candidate = (error as { fetchError?: unknown }).fetchError;
+  return isFetchError(candidate);
+}
+
+/** Safely extracts `FetchError` from unknown thrown values. */
+export function getFetchError<D = unknown>(
+  error: unknown,
+): FetchError<D> | undefined {
+  if (!isComposableFetcherError(error)) return undefined;
+  return error.fetchError as FetchError<D>;
+}
+
+/** Produces a UI-ready message from unknown thrown values. */
+export function toErrorMessage(
+  error: unknown,
+  fallback = 'Unexpected error',
+): string {
+  const fetchError = getFetchError(error);
+  if (!fetchError) return fallback;
+
+  if (fetchError.type !== 'input' && fetchError.type !== 'parse') {
+    return fetchError.message;
+  }
+
+  if (fetchError.issues.length === 0) {
+    return fetchError.message;
+  }
+
+  return `${fetchError.message}: ${fetchError.issues.join(', ')}`;
+}
+
 /**
  * Converts a `FetchError` into a throwable `Error` with
  * the original `FetchError` attached as `.fetchError`.
  */
-export function toError(fe: FetchError): Error & { fetchError: FetchError } {
-  const err = new Error(fe.message) as Error & { fetchError: FetchError };
+export function toError<D = unknown>(fe: FetchError<D>): FetcherThrownError<D> {
+  const err = new Error(fe.message) as FetcherThrownError<D>;
   err.name = `FetchError.${fe.type}`;
   err.fetchError = fe;
   return err;
@@ -94,6 +163,8 @@ export function createComposableFetcherFunctions(
     const catchHandler = params.catch ?? d.sideEffects.catch;
     const errorSchema = params.errorSchema ?? d.data.errorSchema;
     const errorMessage = params.errorMessage ?? d.sideEffects.errorMessage;
+    const errorFormatter =
+      params.errorFormatter ?? d.sideEffects.errorFormatter;
 
     const start = performance.now();
 
@@ -123,6 +194,15 @@ export function createComposableFetcherFunctions(
       return result;
     }
 
+    function format(error: FetchError): FetchError {
+      if (!errorFormatter) return error;
+
+      const message = errorFormatter(error);
+      if (!message || message === error.message) return error;
+
+      return { ...error, message };
+    }
+
     if (inputSchema && body !== undefined) {
       const inputResult = await inputSchema['~standard'].validate(body);
 
@@ -132,8 +212,9 @@ export function createComposableFetcherFunctions(
           message: 'Invalid input',
           issues: inputResult.issues.map((i) => i.message),
         };
-        span({ ok: false, error });
-        return handleError(error);
+        const formatted = format(error);
+        span({ ok: false, error: formatted });
+        return handleError(formatted);
       }
 
       body = inputResult.value;
@@ -155,8 +236,9 @@ export function createComposableFetcherFunctions(
         type: 'network',
         message: `Network error: ${detail}`,
       };
-      span({ ok: false, error });
-      return handleError(error);
+      const formatted = format(error);
+      span({ ok: false, error: formatted });
+      return handleError(formatted);
     }
 
     if (!response.ok) {
@@ -175,8 +257,9 @@ export function createComposableFetcherFunctions(
         message: decoded.message,
         data: decoded.data,
       };
-      span({ status: response.status, ok: false, error });
-      return handleError(error);
+      const formatted = format(error);
+      span({ status: response.status, ok: false, error: formatted });
+      return handleError(formatted);
     }
 
     if (!schema) {
@@ -193,8 +276,9 @@ export function createComposableFetcherFunctions(
         message: 'Unexpected response format',
         issues: result.issues.map((i) => i.message),
       };
-      span({ status: response.status, ok: false, error });
-      return handleError(error);
+      const formatted = format(error);
+      span({ status: response.status, ok: false, error: formatted });
+      return handleError(formatted);
     }
 
     span({ status: response.status, ok: true });

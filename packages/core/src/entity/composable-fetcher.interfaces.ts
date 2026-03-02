@@ -57,6 +57,11 @@ export type FetchError<D = unknown> =
   | ParseError
   | InputError;
 
+/** Throwable error shape used by composable-fetcher (`Error` + `.fetchError`). */
+export type FetcherThrownError<D = unknown> = Error & {
+  fetchError: FetchError<D>;
+};
+
 /** Observability event emitted for every request. */
 export type SpanEvent = {
   name: string;
@@ -95,6 +100,7 @@ export type ComposableFetcherDependencies = {
     onSpan?: (event: SpanEvent) => void;
     catch?: CatchHandler;
     errorMessage?: (data: unknown) => string;
+    errorFormatter?: (error: FetchError) => string;
   };
   data: {
     errorSchema?: StandardSchema;
@@ -116,6 +122,7 @@ export type ExecuteParams = {
   cache?: RequestCache;
   errorSchema?: StandardSchema;
   errorMessage?: (data: unknown) => string;
+  errorFormatter?: (error: FetchError) => string;
   onSpan?: (event: SpanEvent) => void;
   catch?: CatchHandler;
   isRetry?: boolean;
@@ -141,6 +148,8 @@ export type Builder<T = void, E = unknown, I = unknown> = {
     s: S,
     messageExtractor?: (data: InferOutput<S>) => string,
   ): Builder<T, InferOutput<S>, I>;
+  /** Format thrown error messages for UI/UX needs. */
+  formatError(formatter: (error: FetchError<E>) => string): Builder<T, E, I>;
   input<S extends StandardSchema>(s: S): Builder<T, E, InferOutput<S>>;
   /** Set the span name for observability. Defaults to "METHOD /url". */
   name(name: string): Builder<T, E, I>;
@@ -171,6 +180,8 @@ export type FetcherConfig = {
   errorSchema?: StandardSchema;
   /** Extract a human-readable message from validated error data. */
   errorMessage?: (data: unknown) => string;
+  /** Format thrown error messages from any FetchError type. */
+  errorFormatter?: (error: FetchError) => string;
   /** Default headers applied to all requests. */
   headers?: Record<string, string>;
   /** Fetch credentials mode. Defaults to `'include'`. */

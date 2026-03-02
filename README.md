@@ -49,6 +49,7 @@ composableFetcher
   .schema(schema)                    // response validation (Standard Schema)
   .input(schema)                     // input validation for the request body
   .errorSchema(schema, extractor?)   // backend error body validation
+  .formatError(formatter)            // format thrown Error.message from FetchError
   .name('getUsers')                  // span name, defaults to "METHOD /url"
   .fallback('Load failed')           // fallback error message
   .headers({ 'X-Key': '1' })        // per-request headers
@@ -87,6 +88,7 @@ const adminApi = api.configure({ headers: { 'X-Role': 'admin' } });
 | `catch`        | `CatchHandler`               | —                  |
 | `errorSchema`  | `StandardSchema`             | —                  |
 | `errorMessage` | `(data: unknown) => string`  | —                  |
+| `errorFormatter` | `(error: FetchError) => string` | —             |
 
 ## Error handling
 
@@ -102,6 +104,28 @@ type CatchHandler<E> = (params: {
 - Return nothing — error is swallowed, promise resolves to `undefined`
 - Return `retry()` — request is retried transparently (once per request)
 - No `.catch()` — errors throw as normal
+
+For UI flows (e.g. React Query `onError`), prefer `errorFormatter` and use `error.message` directly:
+
+```ts
+const api = createComposableFetcher({
+  errorFormatter: (error) => {
+    if (error.type === 'input' || error.type === 'parse') {
+      return error.issues.join(', ');
+    }
+    if (error.type === 'http' && error.data?.issues?.length) {
+      return error.data.issues.join(', ');
+    }
+    return error.message;
+  },
+});
+
+onError: (error) => {
+  setResult(error.message);
+};
+```
+
+Helper exports (`getFetchError`, `isComposableFetcherError`, `toErrorMessage`) remain available for ad-hoc error inspection.
 
 Set at config level (global) or builder level (per-request). Builder overrides config.
 

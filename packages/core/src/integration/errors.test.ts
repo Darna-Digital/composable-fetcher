@@ -1,5 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createComposableFetcher, toError } from '../index.js';
+import {
+  createComposableFetcher,
+  getFetchError,
+  isComposableFetcherError,
+  toError,
+  toErrorMessage,
+} from '../index.js';
 import type { FetchError } from '../index.js';
 import { createMockSchema } from '../functions/composable-fetcher.functions.mock.js';
 import { createFakeApi, createFailingFetch } from './index.js';
@@ -161,6 +167,51 @@ describe('integration: HTTP error handling', () => {
       expect(fe.message).toBe('The server returned an unexpected response');
     }
   });
+
+  it('formats thrown message with builder .formatError()', async () => {
+    const server = createFakeApi();
+    server.post('/api/items/http-error', () => ({
+      status: 422,
+      statusText: 'Unprocessable Entity',
+      body: { error: 'Validation failed' },
+    }));
+
+    const api = createComposableFetcher({ fetchFn: server.fetch });
+
+    try {
+      await api
+        .url('/api/items/http-error')
+        .formatError((error) => `ui: ${error.message}`)
+        .run('POST');
+      expect.fail('should have thrown');
+    } catch (err) {
+      expect((err as Error).message).toBe('ui: Validation failed');
+    }
+  });
+
+  it('builder .formatError() overrides config errorFormatter', async () => {
+    const server = createFakeApi();
+    server.get('/api/fail', () => ({
+      status: 500,
+      statusText: 'ISE',
+      body: { error: 'Server boom' },
+    }));
+
+    const api = createComposableFetcher({
+      fetchFn: server.fetch,
+      errorFormatter: () => 'from config',
+    });
+
+    try {
+      await api
+        .url('/api/fail')
+        .formatError(() => 'from builder')
+        .run('GET');
+      expect.fail('should have thrown');
+    } catch (err) {
+      expect((err as Error).message).toBe('from builder');
+    }
+  });
 });
 
 describe('integration: network errors', () => {
@@ -223,5 +274,41 @@ describe('integration: toError utility', () => {
     const err = toError(fetchError);
     expect(err.name).toBe('FetchError.network');
     expect(err.fetchError.type).toBe('network');
+  });
+
+  it('extracts FetchError from unknown values', () => {
+    const err = toError({
+      type: 'input',
+      message: 'Invalid input',
+      issues: ['title is required'],
+    });
+
+    const extracted = getFetchError(err);
+    expect(extracted?.type).toBe('input');
+    expect(getFetchError(new Error('plain'))).toBeUndefined();
+  });
+
+  it('detects composable-fetcher thrown errors', () => {
+    const err = toError({
+      type: 'network',
+      message: 'Network error: Failed to fetch',
+    });
+
+    expect(isComposableFetcherError(err)).toBe(true);
+    expect(isComposableFetcherError(new Error('plain'))).toBe(false);
+  });
+
+  it('formats unknown errors into UI messages', () => {
+    const err = toError({
+      type: 'parse',
+      message: 'Unexpected response format',
+      issues: ['count: expected number'],
+    });
+
+    expect(toErrorMessage(err)).toBe(
+      'Unexpected response format: count: expected number',
+    );
+    expect(toErrorMessage(new Error('plain error'))).toBe('Unexpected error');
+    expect(toErrorMessage(new Error('plain error'), 'Fallback')).toBe('Fallback');
   });
 });

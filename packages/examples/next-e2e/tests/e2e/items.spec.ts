@@ -35,6 +35,13 @@ test.describe('composable fetcher e2e', () => {
     await expect(page.getByTestId('failure-result')).toContainText('count: limit exceeded');
   });
 
+  test('shows formatted input error in failure cases panel', async ({ page }) => {
+    await page.goto('/');
+
+    await page.getByTestId('run-input-failure').click();
+    await expect(page.getByTestId('failure-result')).toContainText('title is required');
+  });
+
   test('shows parse error for invalid success payload', async ({ page }) => {
     await page.goto('/');
 

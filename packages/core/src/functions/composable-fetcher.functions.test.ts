@@ -162,6 +162,59 @@ describe('execute errors', () => {
       }
     }
   });
+
+  it('formats thrown message with dependency-level errorFormatter', async () => {
+    const { fetchMock, fns } = createTestSetup({
+      errorFormatter: (error: FetchError) =>
+        error.type === 'input'
+          ? `ui: ${error.issues.join(', ')}`
+          : `ui: ${error.message}`,
+    });
+
+    try {
+      await fns.execute({
+        url: '/api/test',
+        method: 'POST',
+        op: 'mutate',
+        name: 'test',
+        fallback: 'failed',
+        headers: {},
+        body: { email: 'bad' },
+        inputSchema: createFailingMockSchema('email must be valid'),
+      });
+      expect.fail('should have thrown');
+    } catch (err) {
+      expect((err as Error).message).toBe('ui: email must be valid');
+    }
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('per-request errorFormatter overrides dependency-level formatter', async () => {
+    const { fetchMock, fns } = createTestSetup({
+      errorFormatter: () => 'dep formatter',
+    });
+    mockFetchResponse(fetchMock, {
+      status: 403,
+      statusText: 'Forbidden',
+      body: { error: 'Not allowed' },
+    });
+
+    try {
+      await fns.execute({
+        url: '/api/test',
+        method: 'GET',
+        op: 'query',
+        name: 'test',
+        fallback: 'fallback msg',
+        headers: {},
+        errorFormatter: () => 'request formatter',
+      });
+      expect.fail('should have thrown');
+    } catch (err) {
+      expect((err as Error).message).toBe('request formatter');
+    }
+  });
 });
 
 describe('execute errorSchema', () => {
@@ -905,5 +958,27 @@ describe('builder .catch()', () => {
 
     expect(result).toEqual({ ok: true });
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('formats thrown message via builder .formatError()', async () => {
+    const fetchMock = vi.fn();
+    const api = createComposableFetcher({ fetchFn: fetchMock });
+
+    mockFetchResponse(fetchMock, {
+      status: 422,
+      statusText: 'Unprocessable Entity',
+      body: { error: 'Validation failed' },
+    });
+
+    try {
+      await api
+        .url('/api/users')
+        .body({ email: 'bad' })
+        .formatError((error) => `ui: ${error.message}`)
+        .run('POST');
+      expect.fail('should have thrown');
+    } catch (err) {
+      expect((err as Error).message).toBe('ui: Validation failed');
+    }
   });
 });
