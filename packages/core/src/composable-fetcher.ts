@@ -1,6 +1,7 @@
 import type {
   Builder,
   CatchHandler,
+  FetchError,
   FetcherConfig,
   StandardSchema,
 } from './entity/composable-fetcher.interfaces.js';
@@ -43,6 +44,8 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
     let _schema: StandardSchema | undefined;
     let _errorSchema: StandardSchema | undefined;
     let _errorMessage: ((data: any) => string) | undefined;
+    let _errorFormatter: ((error: FetchError) => string) | undefined;
+    let _inputSchema: StandardSchema | undefined;
     let _name = '';
     let _fallback = '';
     let _headers: Record<string, string> | undefined;
@@ -59,6 +62,16 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
         _errorSchema = s;
         _errorMessage = messageExtractor;
         return self as Builder<never, never>;
+      },
+
+      formatError(formatter) {
+        _errorFormatter = formatter as (error: FetchError) => string;
+        return self;
+      },
+
+      input(s) {
+        _inputSchema = s;
+        return self as Builder<never, never, never>;
       },
 
       name(n) {
@@ -95,6 +108,7 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
             onSpan: config.onSpan,
             catch: _catch ?? config.catch,
             errorMessage: _errorMessage ?? config.errorMessage,
+            errorFormatter: _errorFormatter ?? config.errorFormatter,
           },
           data: {
             errorSchema: _errorSchema ?? config.errorSchema,
@@ -114,6 +128,10 @@ export function createComposableFetcher(config: FetcherConfig = {}) {
           ),
           body: isMutation ? _body : undefined,
           schema: _schema,
+          inputSchema: _inputSchema,
+          errorSchema: _errorSchema,
+          errorMessage: _errorMessage ?? config.errorMessage,
+          errorFormatter: _errorFormatter ?? config.errorFormatter,
           credentials: config.credentials ?? 'include',
           cache: config.cache ?? 'no-store',
         }) as Promise<never>;

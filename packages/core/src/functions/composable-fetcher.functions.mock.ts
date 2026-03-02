@@ -16,6 +16,7 @@
 
 import type {
   ComposableFetcherDependencies,
+  FetchError,
   StandardSchema,
 } from '../entity/composable-fetcher.interfaces.js';
 
@@ -34,6 +35,7 @@ export function createComposableFetcherDependenciesMock(
     catch: MockFn;
     errorSchema: StandardSchema;
     errorMessage: MockFn;
+    errorFormatter: (error: FetchError) => string;
   }>,
 ): ComposableFetcherDependencies {
   const noopFn = () => {};
@@ -43,6 +45,7 @@ export function createComposableFetcherDependenciesMock(
       onSpan: overrides?.onSpan,
       catch: overrides?.catch,
       errorMessage: overrides?.errorMessage,
+      errorFormatter: overrides?.errorFormatter,
     },
     data: {
       errorSchema: overrides?.errorSchema,

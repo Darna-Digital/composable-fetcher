@@ -1,80 +1,10 @@
 {
-  "name": "@darna-digital/composable-fetcher",
-  "version": "0.1.1",
-  "description": "Builder-based HTTP fetcher with Standard Schema validation, typed error decoding, composable error handling with retry, and observability.",
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./testing": {
-      "import": {
-        "types": "./dist/testing.d.ts",
-        "default": "./dist/testing.js"
-      },
-      "require": {
-        "types": "./dist/testing.d.cts",
-        "default": "./dist/testing.cjs"
-      }
-    }
-  },
-  "files": [
-    "dist"
-  ],
+  "name": "composable-fetcher-workspace",
+  "private": true,
   "scripts": {
-    "build": "tsup",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "lint": "tsc --noEmit",
-    "prepublishOnly": "npm run lint && npm run test && npm run build",
-    "release": "npm run lint && npm run test && npm run build && npm publish --access public",
-    "release:dry": "npm run lint && npm run test && npm run build && npm publish --access public --dry-run",
-    "release:patch": "npm version patch && npm run release",
-    "release:minor": "npm version minor && npm run release",
-    "release:major": "npm version major && npm run release"
+    "lint": "pnpm --filter @darna-digital/composable-fetcher lint && pnpm --filter next-e2e lint",
+    "test": "pnpm --filter @darna-digital/composable-fetcher test",
+    "build": "pnpm --filter @darna-digital/composable-fetcher build && pnpm --filter next-e2e build"
   },
-  "keywords": [
-    "fetch",
-    "http",
-    "client",
-    "composable",
-    "builder",
-    "standard-schema",
-    "validation",
-    "zod",
-    "valibot",
-    "arktype",
-    "retry",
-    "observability",
-    "typescript"
-  ],
-  "author": "Darna Digital",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/darna-digital/composable-fetcher.git"
-  },
-  "homepage": "https://github.com/darna-digital/composable-fetcher#readme",
-  "bugs": {
-    "url": "https://github.com/darna-digital/composable-fetcher/issues"
-  },
-  "devDependencies": {
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "sideEffects": false
+  "packageManager": "pnpm@10.26.2"
 }
