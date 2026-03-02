@@ -1,0 +1,140 @@
+[00:43:06.735] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/client/components/builtin/global-not-found'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:06.749] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:06.764] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:06.778] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:06.807] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/client/components/builtin/global-not-found'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:06.827] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:06.846] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:06.859] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:06.980] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/client/components/builtin/global-not-found'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:06.993] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.009] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.024] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.290] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/client/components/builtin/global-not-found'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.304] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.316] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.331] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.850] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/client/components/builtin/global-not-found'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.862] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.876] Server  ERROR   ⨯ Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js
+[00:43:07.888] Server  ERROR   Error: Cannot find module 'next/dist/pages/_error'
+Require stack:
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/on-demand-entry-handler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/dev/hot-reloader-turbopack.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/router-server.js
+- /Users/rutenisraila/programming/darna-digital-organization/composable-fetcher/examples/next-e2e/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/next/dist/server/lib/start-server.js

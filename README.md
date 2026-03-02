@@ -14,7 +14,7 @@ Builder-based HTTP fetcher with Standard Schema validation, typed error decoding
 ## Install
 
 ```bash
-npm install @darna-digital/composable-fetcher
+pnpm add @darna-digital/composable-fetcher
 ```
 
 ## Quick start

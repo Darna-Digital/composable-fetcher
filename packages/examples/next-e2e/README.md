@@ -16,10 +16,10 @@ This example app uses `@darna-digital/composable-fetcher` with Zod in a real Nex
 
 ```bash
 pnpm install
-pnpm dev
+pnpm --dir packages/examples/next-e2e dev
 ```
 
-This example uses `link:../..`, so it consumes the local library directly (no publish/release required).
+This example uses `workspace:*`, so it consumes the local library directly (no publish/release required).
 
 Open `http://localhost:3000`.
 
@@ -28,8 +28,8 @@ Client components use TanStack Query mutations and keep composable-fetcher calls
 ## Run e2e
 
 ```bash
-pnpm exec playwright install chromium
-pnpm e2e
+pnpm --dir packages/examples/next-e2e exec playwright install chromium
+pnpm --dir packages/examples/next-e2e e2e
 ```
 
 ## What to test
