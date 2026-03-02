@@ -4,6 +4,7 @@ This example app uses `@darna-digital/composable-fetcher` with Zod in a real Nex
 
 - Server Component page shell in `app/page.tsx`
 - Small client islands in `app/components/*`
+- TanStack Query mutations for request state and errors
 - Frontend form in `app/components/item-form.tsx`
 - Failure scenarios panel in `app/components/failure-cases.tsx`
 - API route in `app/api/items/route.ts`
@@ -22,7 +23,7 @@ This example uses `link:../..`, so it consumes the local library directly (no pu
 
 Open `http://localhost:3000`.
 
-The form uses React's form `action` pattern with `useFormStatus`, matching current Next.js/Vercel guidance for concise client-side UX.
+Client components use TanStack Query mutations and keep composable-fetcher calls close to UI intent.
 
 ## Run e2e
 

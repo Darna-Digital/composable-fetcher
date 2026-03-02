@@ -8,7 +8,7 @@ export default function Home() {
       <main className={styles.main}>
         <h1>Composable Fetcher E2E Example</h1>
         <p className={styles.subtitle}>
-          Server Component shell + focused Client Components using{' '}
+          Server shell + TanStack Query client mutations with{' '}
           <code>.input(zodSchema)</code>.
         </p>
         <ItemForm />

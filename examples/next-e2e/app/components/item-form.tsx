@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 import {
   CreateItemInputSchema,
   CreateItemResponseSchema,
@@ -12,31 +12,35 @@ import { api, toUiMessage } from '@/lib/fetcher-client';
 import styles from '../page.module.css';
 
 export function ItemForm() {
-  const formRef = useRef<HTMLFormElement>(null);
+  const [title, setTitle] = useState('');
+  const [count, setCount] = useState('1');
   const [message, setMessage] = useState('');
   const [createdItem, setCreatedItem] = useState<Item | null>(null);
 
-  async function createItem(formData: FormData) {
-    setMessage('');
-
-    const title = String(formData.get('title') ?? '');
-    const count = Number(formData.get('count'));
-
-    try {
-      const result = await api
+  const createItemMutation = useMutation({
+    mutationFn: async (input: { title: string; count: number }) =>
+      api
         .url('/api/items')
         .input(CreateItemInputSchema)
-        .body({ title, count })
+        .body(input)
         .errorSchema(ErrorResponseSchema, (data) => data.error)
         .schema(CreateItemResponseSchema)
-        .run('POST');
-
+        .run('POST'),
+    onSuccess: (result) => {
       setCreatedItem(result.item);
       setMessage('Created item successfully.');
-      formRef.current?.reset();
-    } catch (error) {
+      setTitle('');
+      setCount('1');
+    },
+    onError: (error) => {
       setMessage(toUiMessage(error));
-    }
+    },
+  });
+
+  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setMessage('');
+    createItemMutation.mutate({ title, count: Number(count) });
   }
 
   return (
@@ -44,14 +48,14 @@ export function ItemForm() {
       <h2>Create Item</h2>
       <p>Client-side input validation runs before the request is sent.</p>
 
-      <form ref={formRef} className={styles.form} action={createItem}>
+      <form className={styles.form} onSubmit={onSubmit}>
         <label className={styles.label}>
           Title
           <input
             data-testid="item-title"
-            name="title"
             className={styles.input}
-            defaultValue=""
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
             placeholder="Notebook"
           />
         </label>
@@ -60,15 +64,22 @@ export function ItemForm() {
           Count
           <input
             data-testid="item-count"
-            name="count"
             className={styles.input}
-            defaultValue="1"
+            value={count}
+            onChange={(event) => setCount(event.target.value)}
             type="number"
             min={1}
           />
         </label>
 
-        <SubmitButton />
+        <button
+          data-testid="submit-item"
+          className={styles.button}
+          type="submit"
+          disabled={createItemMutation.isPending}
+        >
+          {createItemMutation.isPending ? 'Creating...' : 'Create'}
+        </button>
       </form>
 
       <p data-testid="form-message" className={styles.message}>
@@ -81,20 +92,5 @@ export function ItemForm() {
         </pre>
       )}
     </section>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      data-testid="submit-item"
-      className={styles.button}
-      type="submit"
-      disabled={pending}
-    >
-      {pending ? 'Creating...' : 'Create'}
-    </button>
   );
 }

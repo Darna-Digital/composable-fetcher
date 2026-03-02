@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 import {
   CreateItemInputSchema,
   CreateItemResponseSchema,
@@ -11,60 +12,49 @@ import styles from '../page.module.css';
 
 export function FailureCases() {
   const [result, setResult] = useState('No checks run yet');
-  const [isPending, startTransition] = useTransition();
 
-  function runCase(run: () => Promise<unknown>, expectedFailureMessage: string) {
-    startTransition(async () => {
-      setResult('');
+  const inputFailure = useMutation({
+    mutationFn: () =>
+      api
+        .url('/api/items')
+        .input(CreateItemInputSchema)
+        .body({ title: '', count: 0 })
+        .schema(CreateItemResponseSchema)
+        .run('POST'),
+    onMutate: () => setResult(''),
+    onSuccess: () => setResult('Expected input validation to fail, but request succeeded.'),
+    onError: (error) => setResult(toUiMessage(error)),
+  });
 
-      try {
-        await run();
-        setResult(expectedFailureMessage);
-      } catch (error) {
-        setResult(toUiMessage(error));
-      }
-    });
-  }
+  const httpFailure = useMutation({
+    mutationFn: () =>
+      api
+        .url('/api/items/http-error')
+        .input(CreateItemInputSchema)
+        .body({ title: 'Notebook', count: 2 })
+        .errorSchema(ErrorResponseSchema, (data) => data.error)
+        .schema(CreateItemResponseSchema)
+        .run('POST'),
+    onMutate: () => setResult(''),
+    onSuccess: () => setResult('Expected HTTP error, but request succeeded.'),
+    onError: (error) => setResult(toUiMessage(error)),
+  });
 
-  function runInputFailure() {
-    return runCase(
-      () =>
-        api
-          .url('/api/items')
-          .input(CreateItemInputSchema)
-          .body({ title: '', count: 0 })
-          .schema(CreateItemResponseSchema)
-          .run('POST'),
-      'Expected input validation to fail, but request succeeded.',
-    );
-  }
+  const parseFailure = useMutation({
+    mutationFn: () =>
+      api
+        .url('/api/items/parse-error')
+        .input(CreateItemInputSchema)
+        .body({ title: 'Notebook', count: 2 })
+        .schema(CreateItemResponseSchema)
+        .run('POST'),
+    onMutate: () => setResult(''),
+    onSuccess: () => setResult('Expected parse validation error, but request succeeded.'),
+    onError: (error) => setResult(toUiMessage(error)),
+  });
 
-  function runHttpFailure() {
-    return runCase(
-      () =>
-        api
-          .url('/api/items/http-error')
-          .input(CreateItemInputSchema)
-          .body({ title: 'Notebook', count: 2 })
-          .errorSchema(ErrorResponseSchema, (data) => data.error)
-          .schema(CreateItemResponseSchema)
-          .run('POST'),
-      'Expected HTTP error, but request succeeded.',
-    );
-  }
-
-  function runParseFailure() {
-    return runCase(
-      () =>
-        api
-          .url('/api/items/parse-error')
-          .input(CreateItemInputSchema)
-          .body({ title: 'Notebook', count: 2 })
-          .schema(CreateItemResponseSchema)
-          .run('POST'),
-      'Expected parse validation error, but request succeeded.',
-    );
-  }
+  const isPending =
+    inputFailure.isPending || httpFailure.isPending || parseFailure.isPending;
 
   return (
     <section className={styles.card}>
@@ -77,7 +67,7 @@ export function FailureCases() {
           className={styles.button}
           type="button"
           disabled={isPending}
-          onClick={runInputFailure}
+          onClick={() => inputFailure.mutate()}
         >
           Input validation fails
         </button>
@@ -87,7 +77,7 @@ export function FailureCases() {
           className={styles.button}
           type="button"
           disabled={isPending}
-          onClick={runHttpFailure}
+          onClick={() => httpFailure.mutate()}
         >
           HTTP error schema fails
         </button>
@@ -97,7 +87,7 @@ export function FailureCases() {
           className={styles.button}
           type="button"
           disabled={isPending}
-          onClick={runParseFailure}
+          onClick={() => parseFailure.mutate()}
         >
           Parse schema fails
         </button>
