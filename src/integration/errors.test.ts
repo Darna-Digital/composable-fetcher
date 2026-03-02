@@ -10,7 +10,7 @@ type ValidationError = {
   violations: Array<{ field: string; message: string }>;
 };
 
-describe('e2e: HTTP error handling', () => {
+describe('integration: HTTP error handling', () => {
   it('throws on 404 with default { error } body decoding', async () => {
     const server = createFakeApi();
     server.get('/api/users/999', () => ({
@@ -163,7 +163,7 @@ describe('e2e: HTTP error handling', () => {
   });
 });
 
-describe('e2e: network errors', () => {
+describe('integration: network errors', () => {
   it('throws FetchError.network when the network is down', async () => {
     const api = createComposableFetcher({ fetchFn: createFailingFetch() });
 
@@ -197,7 +197,7 @@ describe('e2e: network errors', () => {
   });
 });
 
-describe('e2e: toError utility', () => {
+describe('integration: toError utility', () => {
   it('converts FetchError to throwable Error with .fetchError property', () => {
     const fetchError: FetchError = {
       type: 'http',

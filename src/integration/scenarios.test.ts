@@ -1,12 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { createComposableFetcher } from '../index.js';
 import type { FetchError } from '../index.js';
-import { createMockSchema } from '../functions/composable-fetcher.functions.mock.js';
+import {
+  createFailingMockSchema,
+  createMockSchema,
+} from '../functions/composable-fetcher.functions.mock.js';
 import { createFakeApi } from './index.js';
 
 type User = { id: string; name: string; email: string };
 
-describe('e2e: CRUD workflow', () => {
+describe('integration: CRUD workflow', () => {
   it('create, read, update, delete a user', async () => {
     const server = createFakeApi();
     const db: Record<string, User> = {};
@@ -76,7 +79,7 @@ describe('e2e: CRUD workflow', () => {
   });
 });
 
-describe('e2e: JWT refresh flow', () => {
+describe('integration: JWT refresh flow', () => {
   it('expired token -> refresh -> retry succeeds', async () => {
     let currentToken = 'expired-token';
     const userPayload: User = { id: '1', name: 'Protected User', email: 'user@example.com' };
@@ -120,7 +123,7 @@ describe('e2e: JWT refresh flow', () => {
   });
 });
 
-describe('e2e: error reporting', () => {
+describe('integration: error reporting', () => {
   it('collects errors from multiple failing requests via onSpan', async () => {
     const server = createFakeApi();
     server.get('/api/fail-1', () => ({
@@ -159,7 +162,7 @@ describe('e2e: error reporting', () => {
   });
 });
 
-describe('e2e: edge cases', () => {
+describe('integration: edge cases', () => {
   it('handles request to unregistered route (404 from fake server)', async () => {
     const server = createFakeApi();
 
@@ -178,5 +181,86 @@ describe('e2e: edge cases', () => {
         expect(fe.status).toBe(404);
       }
     }
+  });
+});
+
+describe('integration: input validation scenarios', () => {
+  it('catches input validation errors via .catch() handler', async () => {
+    const server = createFakeApi();
+    const api = createComposableFetcher({ fetchFn: server.fetch });
+
+    server.post('/api/items', () => ({
+      status: 200,
+      statusText: 'OK',
+      body: { ok: true },
+    }));
+
+    let capturedError: FetchError | undefined;
+
+    await api
+      .url('/api/items')
+      .input(createFailingMockSchema('invalid fields'))
+      .body({ title: 123, count: 'not a number' })
+      .catch(({ error }) => {
+        capturedError = error;
+      })
+      .run('POST');
+
+    expect(capturedError).toBeDefined();
+    expect(capturedError!.type).toBe('input');
+    if (capturedError!.type === 'input') {
+      expect(capturedError!.issues).toContain('invalid fields');
+    }
+  });
+
+  it('validates a simple two-property object before sending', async () => {
+    const server = createFakeApi();
+    const api = createComposableFetcher({ fetchFn: server.fetch });
+
+    const payloadSchema = {
+      '~standard': {
+        version: 1 as const,
+        validate: (value: unknown) => {
+          if (typeof value !== 'object' || value === null) {
+            return { issues: [{ message: 'payload must be an object' }] };
+          }
+
+          const payload = value as Record<string, unknown>;
+          if (typeof payload.title !== 'string') {
+            return { issues: [{ message: 'title must be a string' }] };
+          }
+          if (typeof payload.count !== 'number') {
+            return { issues: [{ message: 'count must be a number' }] };
+          }
+
+          return {
+            value: {
+              title: payload.title.trim(),
+              count: payload.count,
+            },
+          };
+        },
+      },
+    };
+
+    let requestBody: unknown;
+    server.post('/api/items', ({ body }) => {
+      requestBody = body;
+      return {
+        status: 200,
+        statusText: 'OK',
+        body: { ok: true, item: body },
+      };
+    });
+
+    const result = await api
+      .url('/api/items')
+      .input(payloadSchema)
+      .body({ title: '  Notebook  ', count: 3 })
+      .schema(createMockSchema({ ok: true, item: { title: 'Notebook', count: 3 } }))
+      .run('POST');
+
+    expect(requestBody).toEqual({ title: 'Notebook', count: 3 });
+    expect(result).toEqual({ ok: true, item: { title: 'Notebook', count: 3 } });
   });
 });

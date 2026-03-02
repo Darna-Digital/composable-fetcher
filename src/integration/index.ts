@@ -1,5 +1,5 @@
 /**
- * Fake API server simulator for e2e tests.
+ * Fake API server simulator for integration tests.
  *
  * Simulates a REST API by routing `fetch` calls through an in-memory
  * handler registry. Each handler receives the request info and returns

@@ -7,7 +7,7 @@ import {
 } from '../functions/composable-fetcher.functions.mock.js';
 import { createFakeApi } from './index.js';
 
-describe('e2e: input validation', () => {
+describe('integration: input validation', () => {
   it('validates input and sends the request on success', async () => {
     const server = createFakeApi();
     const api = createComposableFetcher({ fetchFn: server.fetch });

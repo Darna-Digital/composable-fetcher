@@ -10,7 +10,7 @@ import { createFakeApi } from './index.js';
 type User = { id: string; name: string; email: string };
 type UserList = { users: User[]; total: number };
 
-describe('e2e: GET requests', () => {
+describe('integration: GET requests', () => {
   it('fetches and validates a list of users', async () => {
     const server = createFakeApi();
     const usersPayload: UserList = {
@@ -82,7 +82,7 @@ describe('e2e: GET requests', () => {
   });
 });
 
-describe('e2e: mutations (POST, PUT, PATCH, DELETE)', () => {
+describe('integration: mutations (POST, PUT, PATCH, DELETE)', () => {
   it('creates a user via POST and validates response', async () => {
     const server = createFakeApi();
     server.post('/api/users', ({ body }) => {

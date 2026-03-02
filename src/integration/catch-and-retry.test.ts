@@ -7,7 +7,7 @@ import { createFakeApi } from './index.js';
 type User = { id: string; name: string; email: string };
 type UserList = { users: User[]; total: number };
 
-describe('e2e: catch handler and retry', () => {
+describe('integration: catch handler and retry', () => {
   it('retries a 401 with refreshed token and succeeds', async () => {
     let tokenVersion = 0;
     const userPayload: User = { id: '1', name: 'Alice', email: 'alice@example.com' };
