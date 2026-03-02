@@ -8,7 +8,8 @@ export default function Home() {
       <main className={styles.main}>
         <h1>Composable Fetcher E2E Example</h1>
         <p className={styles.subtitle}>
-          Uses <code>.input(zodSchema)</code> and a Next.js API route.
+          Server Component shell + focused Client Components using{' '}
+          <code>.input(zodSchema)</code>.
         </p>
         <ItemForm />
         <FailureCases />

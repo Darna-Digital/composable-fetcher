@@ -2,6 +2,8 @@
 
 This example app uses `@darna-digital/composable-fetcher` with Zod in a real Next.js flow:
 
+- Server Component page shell in `app/page.tsx`
+- Small client islands in `app/components/*`
 - Frontend form in `app/components/item-form.tsx`
 - Failure scenarios panel in `app/components/failure-cases.tsx`
 - API route in `app/api/items/route.ts`
@@ -19,6 +21,8 @@ pnpm dev
 This example uses `link:../..`, so it consumes the local library directly (no publish/release required).
 
 Open `http://localhost:3000`.
+
+The form uses React's form `action` pattern with `useFormStatus`, matching current Next.js/Vercel guidance for concise client-side UX.
 
 ## Run e2e
 

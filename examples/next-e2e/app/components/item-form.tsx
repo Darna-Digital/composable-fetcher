@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useFormStatus } from 'react-dom';
 import {
   CreateItemInputSchema,
   CreateItemResponseSchema,
@@ -11,37 +12,30 @@ import { api, toUiMessage } from '@/lib/fetcher-client';
 import styles from '../page.module.css';
 
 export function ItemForm() {
-  const [title, setTitle] = useState('');
-  const [count, setCount] = useState('1');
-  const [pending, setPending] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const [message, setMessage] = useState('');
   const [createdItem, setCreatedItem] = useState<Item | null>(null);
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setPending(true);
+  async function createItem(formData: FormData) {
     setMessage('');
+
+    const title = String(formData.get('title') ?? '');
+    const count = Number(formData.get('count'));
 
     try {
       const result = await api
         .url('/api/items')
         .input(CreateItemInputSchema)
-        .body({
-          title,
-          count: Number(count),
-        })
+        .body({ title, count })
         .errorSchema(ErrorResponseSchema, (data) => data.error)
         .schema(CreateItemResponseSchema)
         .run('POST');
 
       setCreatedItem(result.item);
       setMessage('Created item successfully.');
-      setTitle('');
-      setCount('1');
+      formRef.current?.reset();
     } catch (error) {
       setMessage(toUiMessage(error));
-    } finally {
-      setPending(false);
     }
   }
 
@@ -50,14 +44,14 @@ export function ItemForm() {
       <h2>Create Item</h2>
       <p>Client-side input validation runs before the request is sent.</p>
 
-      <form className={styles.form} onSubmit={onSubmit}>
+      <form ref={formRef} className={styles.form} action={createItem}>
         <label className={styles.label}>
           Title
           <input
             data-testid="item-title"
+            name="title"
             className={styles.input}
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
+            defaultValue=""
             placeholder="Notebook"
           />
         </label>
@@ -66,22 +60,15 @@ export function ItemForm() {
           Count
           <input
             data-testid="item-count"
+            name="count"
             className={styles.input}
-            value={count}
-            onChange={(event) => setCount(event.target.value)}
+            defaultValue="1"
             type="number"
             min={1}
           />
         </label>
 
-        <button
-          data-testid="submit-item"
-          className={styles.button}
-          type="submit"
-          disabled={pending}
-        >
-          {pending ? 'Creating...' : 'Create'}
-        </button>
+        <SubmitButton />
       </form>
 
       <p data-testid="form-message" className={styles.message}>
@@ -94,5 +81,20 @@ export function ItemForm() {
         </pre>
       )}
     </section>
+  );
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      data-testid="submit-item"
+      className={styles.button}
+      type="submit"
+      disabled={pending}
+    >
+      {pending ? 'Creating...' : 'Create'}
+    </button>
   );
 }
