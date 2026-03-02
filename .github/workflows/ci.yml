@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -43,7 +47,7 @@ jobs:
         run: npm ci && npm run build
 
       - name: Install example dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
         working-directory: examples/next-e2e
 
       - name: Install Playwright Chromium

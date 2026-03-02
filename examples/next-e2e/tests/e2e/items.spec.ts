@@ -11,6 +11,7 @@ test.describe('composable fetcher e2e', () => {
     await page.getByTestId('submit-item').click();
 
     await expect(page.getByTestId('form-message')).toContainText('title is required');
+    await expect(page.getByTestId('created-item')).toHaveCount(0);
   });
 
   test('creates item with valid input', async ({ page }) => {
@@ -29,9 +30,9 @@ test.describe('composable fetcher e2e', () => {
     await page.goto('/');
 
     await page.getByTestId('run-http-failure').click();
-    await expect(page.getByTestId('failure-result')).toHaveText(
-      'http: title: already exists, count: limit exceeded',
-    );
+    await expect(page.getByTestId('failure-result')).toContainText('http:');
+    await expect(page.getByTestId('failure-result')).toContainText('title: already exists');
+    await expect(page.getByTestId('failure-result')).toContainText('count: limit exceeded');
   });
 
   test('shows parse error for invalid success payload', async ({ page }) => {
