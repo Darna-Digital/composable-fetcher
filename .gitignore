@@ -4,3 +4,4 @@ dist/
 **/.next/
 *.tsbuildinfo
 .DS_Store
+.idea

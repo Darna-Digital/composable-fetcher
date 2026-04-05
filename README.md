@@ -5,7 +5,7 @@
 Builder-based HTTP fetcher with Standard Schema validation, typed error decoding, retry, and observability.
 
 - Zero dependencies — native `fetch`
-- Standard Schema v1 (Zod, Valibot, ArkType, etc.)
+- Standard Schema (Effect Schema, Zod, Valibot, ArkType, etc.)
 - Full type inference from schema to response
 - Input validation — catch bad data before it hits the server
 - Inline error handling with retry
