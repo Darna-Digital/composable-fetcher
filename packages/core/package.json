@@ -1,6 +1,6 @@
 {
   "name": "@darna-digital/composable-fetcher",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Builder-based HTTP fetcher with Standard Schema validation, typed error decoding, composable error handling with retry, and observability.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -37,8 +37,8 @@
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
     "prepublishOnly": "pnpm run lint && pnpm run test && pnpm run build",
-    "release": "pnpm run lint && pnpm run test && pnpm run build && pnpm publish --access public",
-    "release:dry": "pnpm run lint && pnpm run test && pnpm run build && pnpm publish --access public --dry-run",
+    "release": "pnpm run lint && pnpm run test && pnpm run build && cp ../../README.md . && pnpm publish --access public && rm README.md",
+    "release:dry": "pnpm run lint && pnpm run test && pnpm run build && cp ../../README.md . && pnpm publish --access public --dry-run && rm README.md",
     "release:patch": "pnpm version patch && pnpm run release",
     "release:minor": "pnpm version minor && pnpm run release",
     "release:major": "pnpm version major && pnpm run release"
